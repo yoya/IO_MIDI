@@ -1,0 +1,22 @@
+{
+    "name": "yoya/io_midi",
+    "type": "library",
+    "description": "MIDI library",
+    "keywords": ["midi", "music"],
+    "homepage": "",
+    "version": "1.0.5",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "yoya",
+            "email": "yoya@awm.jp"
+        }
+    ],
+    "require": {
+        "php": ">=5.1.0",
+	"IO_Bit": ">=2.1.1";
+    },
+    "autoload": {
+        "psr-0": { "IO\\MIDI": "src/" }
+    }
+}
