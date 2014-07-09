@@ -5,8 +5,8 @@ require_once 'IO/MIDI.php';
 $options = getopt("f:ctF");
 
 if ((isset($options['f']) === false) || (is_readable($options['f']) === false)) {
-    echo "Usage: php midililyc.php -f <midi_file>\n";
-    echo "ex) php midililyc.php -f test.mid\n";
+    echo "Usage: php midililyc.php -f <midi_file> [-ctF]\n";
+    echo "ex) php midililyc.php -f test.mid -c -F\n";
     exit(1);
 }
 
