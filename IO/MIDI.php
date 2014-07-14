@@ -326,7 +326,7 @@ class IO_MIDI {
                         for ($i = 0 ; $i < $dataLen; $i++) {
 			    printf(" %02x", ord($value{$i}));
                         }
-                        if($meta_event_type == 0x05){
+                        if (($key === 'MetaEventData') && ($meta_event_type === 0x05)) {
                             echo " ($value)";
                         }
                         break;
