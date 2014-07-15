@@ -181,9 +181,13 @@ class IO_MIDI {
 	    switch ($type) {
 	      case 0x01:
 	        $length = $this->getVaribleLengthValue($reader);
-		$chunk['MetaEventData'] = $reader->getData($length);
+    		$chunk['MetaEventData'] = $reader->getData($length);
 		break;
-	    
+          case 0x2f:
+        break;
+        default:
+                fprintf(STDERR, "Unknown format(0x%02X) offset(0x%x) in XFInfoHeader\n", $status, $o - 1);
+        break;
 	    }
 
         }
