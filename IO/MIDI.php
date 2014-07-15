@@ -27,9 +27,9 @@ class IO_MIDI {
             } elseif(isset($chunk['xfkaraoke'])) {
                 $this->xfkaraoke []= $chunk;
             } else {
-	        fprintf(STDERR, "Can't parse chunk.\n");
-	        break;
-	    }
+                fprintf(STDERR, "Can't parse chunk.\n");
+                break;
+            }
         }
     }
     function _parseChunk(&$reader) {
@@ -52,8 +52,8 @@ class IO_MIDI {
               $chunk['xfkaraoke'] = $this->_parseChunkXFKaraoke($reader, $nextOffset);
               break;
           default:
-	      fprintf(STDERR, "warning: Unknown chunk (type=$type)\n");
-	      return array();
+              fprintf(STDERR, "warning: Unknown chunk (type=$type)\n");
+              return array();
         }
         list($doneOffset, $dummy) = $reader->getOffset();
         if ($doneOffset !== $nextOffset) {
@@ -174,37 +174,37 @@ class IO_MIDI {
             if ($offset >= $nextOffset) {
                 break; // done
             }
-	    $chunk = array('_offset' => $offset);
+            $chunk = array('_offset' => $offset);
             // delta time
             $chunk['DeltaTime'] = $this->getVaribleLengthValue($reader);
             $status = $reader->getUI8(); // status byte
-	    if ($status !== 0xFF) {
+            if ($status !== 0xFF) {
                 list($o, $dummy) = $reader->getOffset();
                 fprintf(STDERR, "Unknown format(0x%02X) offset(0x%x) in XFInfoHeader\n", $status, $o - 1);
-	        break; // failed
-	    }
-	    $type = $reader->getUI8();
-	    $chunk['MetaEventType'] = $type;
-	    switch ($type) {
-	      case 0x01:
-	        $length = $this->getVaribleLengthValue($reader);
-    		$chunk['MetaEventData'] = $reader->getData($length);
-		break;
+                break; // failed
+            }
+            $type = $reader->getUI8();
+            $chunk['MetaEventType'] = $type;
+            switch ($type) {
+              case 0x01:
+                $length = $this->getVaribleLengthValue($reader);
+                $chunk['MetaEventData'] = $reader->getData($length);
+                break;
               case 0x2F: // End of Track
-	        $length = $this->getVaribleLengthValue($reader);
+                $length = $this->getVaribleLengthValue($reader);
                 break;
               default:
                 list($o, $dummy) = $reader->getOffset();
                 fprintf(STDERR, "Unknown type(0x%02X) offset(0x%x) in XFInfoHeader\n", $type, $o - 1);
               break;
-	    }
-	    $xfinfo[] = $chunk;
+            }
+            $xfinfo[] = $chunk;
         }
-    	return $xfinfo;
+            return $xfinfo;
     }
     function _parseChunkXFKaraoke($reader, $nextOffset) {
         $xfkaraoke = array();
-	
+        
         return $xfkaraoke;
     }
     function getVaribleLengthValue($reader) {
@@ -353,11 +353,11 @@ class IO_MIDI {
                 foreach ($chunk as $key => $value) {
                     switch ($key) {
                       case 'EventType':
-		        if ($value < 0xFF) {
+                        if ($value < 0xFF) {
                             $eventname = $this->event_name[$value];
                         } else {
                             $eventname = "Meta Event";
-			}
+                        }
                         echo " $key:$value($eventname),";
                         break;
                       case 'MetaEventType':
@@ -377,9 +377,9 @@ class IO_MIDI {
                       case 'SystemExCont':
                       case 'MetaEventData':
                         echo " $key:";
-		        $dataLen = strlen($value);
+                        $dataLen = strlen($value);
                         for ($i = 0 ; $i < $dataLen; $i++) {
-			    printf(" %02x", ord($value{$i}));
+                            printf(" %02x", ord($value{$i}));
                         }
                         if (($key === 'MetaEventData') && ($meta_event_type === 0x05)) {
                             echo " ($value)";
@@ -400,11 +400,11 @@ class IO_MIDI {
     }
     function build($opts = array()) {
         $writer = new IO_Bit();
-	$this->_buildChunk($writer, $this->header, $opts);
-	foreach ($this->tracks as $track) {
-	    $this->_buildChunk($writer, $track, $opts);
-	}
-	return $writer->output();
+        $this->_buildChunk($writer, $this->header, $opts);
+        foreach ($this->tracks as $track) {
+            $this->_buildChunk($writer, $track, $opts);
+        }
+        return $writer->output();
     }
     function _buildChunk(&$writer, $chunk, $opts) {
         $type = $chunk['type'];
@@ -419,46 +419,46 @@ class IO_MIDI {
           default:
               throw new Exception("Unknown chunk (type=$type)\n");
         }
-	$chunkData = $writerChunk->output();
-	$length = strlen($chunkData);
+        $chunkData = $writerChunk->output();
+        $length = strlen($chunkData);
         $writer->putData($type , 4);
-	$writer->putUI32BE($length);
+        $writer->putUI32BE($length);
         $writer->putData($chunkData, $length);
     }
     function _buildChunkHeader(&$writer, $header, $opts) {
         $writer->putUI16BE($header['Format']);
         $writer->putUI16BE($header['NumberOfTracks']);
-	$division = ($header['DivisionFlag'] << 15) || $header['Division'];
-	$writer->putUI16BE($division);
+        $division = ($header['DivisionFlag'] << 15) || $header['Division'];
+        $writer->putUI16BE($division);
     }
     function _buildChunkTrack(&$writer, $track, $opts) {
         $prev_status = null;
         foreach ($track as $chunk) {
            $this->putVaribleLengthValue($writer, $chunk['DeltaTime']);
-	   $eventType = $chunk['EventType'];
-	   if (isset($chunk['MIDIChannel'])) {
-	       $midiChannel = $chunk['MIDIChannel'];
+           $eventType = $chunk['EventType'];
+           if (isset($chunk['MIDIChannel'])) {
+               $midiChannel = $chunk['MIDIChannel'];
            } else {
                if (isset($chunk['MetaEventType'])) {
                    $midiChannel = 0xF;
-	       } else if (isset($chunk['SystemEx'])) {
+               } else if (isset($chunk['SystemEx'])) {
                    $midiChannel = 0;
-	       } else if (isset($chunk['SystemExCont'])) {
+               } else if (isset($chunk['SystemExCont'])) {
                    $midiChannel = 0x7;
                } else {
-	           throw new Exception();
+                   throw new Exception();
                }
            }
-	   $status = $eventType << 4 | $midiChannel;
+           $status = $eventType << 4 | $midiChannel;
            if (empty($opts['runningstatus']) === true) {
                $writer->putUI8($status);
            } else {
                if ($prev_status !== $status) {
                    $writer->putUI8($status);
-		   $prev_status = $status;
+                   $prev_status = $status;
                }
            }
-	   switch ($eventType) {
+           switch ($eventType) {
               case 0x8: // Note Off
               case 0x9: // Note On
                 $writer->putUI8($chunk['NoteNumber']);
@@ -470,7 +470,7 @@ class IO_MIDI {
                 break;
               case 0xB: // Controller
                 $controllerType = $chunk['ControllerType'];
-		$writer->putUI8($controllerType);
+                $writer->putUI8($controllerType);
                 switch ($controllerType) {
                   case 0: // Bank Select #32 more commonly used
                   case 1: // Modulation Wheel
@@ -502,12 +502,12 @@ class IO_MIDI {
               case 0xF: // Meta Event of System Ex
                 if ($midiChannel == 0xF) { // not midiChannel
                     $writer->putUI8($chunk['MetaEventType']);
-		    $length = strlen($chunk['MetaEventData']);
+                    $length = strlen($chunk['MetaEventData']);
                     $this->putVaribleLengthValue($writer, $length);
                     $writer->putData($chunk['MetaEventData'], $length);
                     break;
                 } else if ($midiChannel == 0x0) { // System Ex
-		    $length = strlen($chunk['SystemEx']);
+                    $length = strlen($chunk['SystemEx']);
                     $this->putVaribleLengthValue($writer, $length);
                     $writer->putData($chunk['SystemEx'], $length);
                     break;
@@ -517,8 +517,8 @@ class IO_MIDI {
               default:
                 printf("unknown EventType=0x%02X\n", $eventType);
                 exit (0);
-	   }
-	}
+           }
+        }
     }
     function putVaribleLengthValue($writer, $value) {
         $binList = Array();
