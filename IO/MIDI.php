@@ -183,21 +183,9 @@ class IO_MIDI {
                 fprintf(STDERR, "Unknown format(0x%02X) offset(0x%x) in XFInfoHeader\n", $status, $o - 1);
                 break; // failed
             }
-            $type = $reader->getUI8();
-            $chunk['MetaEventType'] = $type;
-            switch ($type) {
-              case 0x01:
-                $length = $this->getVaribleLengthValue($reader);
-                $chunk['MetaEventData'] = $reader->getData($length);
-                break;
-              case 0x2F: // End of Track
-                $length = $this->getVaribleLengthValue($reader);
-                break;
-              default:
-                list($o, $dummy) = $reader->getOffset();
-                fprintf(STDERR, "Unknown type(0x%02X) offset(0x%x) in XFInfoHeader\n", $type, $o - 1);
-              break;
-            }
+            $chunk['MetaEventType'] = $reader->getUI8();
+            $length = $this->getVaribleLengthValue($reader);
+            $chunk['MetaEventData'] = $reader->getData($length);
             $xfinfo[] = $chunk;
         }
         return $xfinfo;
