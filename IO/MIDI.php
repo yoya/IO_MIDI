@@ -25,13 +25,14 @@ class IO_MIDI {
             } elseif(isset($chunk['xfinfo'])) {
                 $this->xfinfo = $chunk;
             } elseif(isset($chunk['xfkaraoke'])) {
-                $this->xfkaraoke []= $chunk;
+                $this->xfkaraoke = $chunk;
             } else {
                 fprintf(STDERR, "Can't parse chunk.\n");
                 break;
             }
         }
     }
+
     function _parseChunk(&$reader) {
         list($offset, $dummy) = $reader->getOffset();
         $type = $reader->getData(4);
@@ -359,18 +360,21 @@ class IO_MIDI {
         }
         echo "HEADER:\n";
         foreach ($this->header['header'] as $key => $value) {
-            echo "  $key: $value\n";
+        echo "  $key: $value\n";
         }
         if (empty($opts['hexdump']) === false) {
             $bitio->hexdump(0, $this->header['length'] + 8);
         }
-        foreach ($this->tracks as $idx => $track) {
-            echo "TRACK[$idx]:\n";
+
+        $xfkaraoke_with_track["karaoke"] =  $this->xfkaraoke;
+        $xfkaraoke_with_track["karaoke"]["track"] = $this->xfkaraoke["xfkaraoke"];
+        foreach ($xfkaraoke_with_track as $idx => $track) {
+           echo "TRACK[$idx]:\n";
             if (empty($opts['hexdump']) === false) {
                 $bitio->hexdump($track['_offset'], 8);
             }
             foreach ($track['track'] as $idx2 => $chunk) {
-                echo "  [$idx2]:";
+               echo "  [$idx2]:";
                 foreach ($chunk as $key => $value) {
                     switch ($key) {
                       case 'EventType':
@@ -379,35 +383,37 @@ class IO_MIDI {
                         } else {
                             $eventname = "Meta Event";
                         }
-                        echo " $key:$value($eventname),";
+                      echo " $key:$value($eventname),";
                         break;
                       case 'MetaEventType':
                         if (isset($this->meta_event_name[$value])) {
                             $meta_event_type = $value;
                             $eventname = $this->meta_event_name[$value];
-                            echo " $key:$value($eventname),";
+                           echo " $key:$value($eventname)";
                         } else {
-                            echo " $key:$value,";
+                           echo " $key:$value,";
                         }
                         break;
                       case 'ControllerType':
                         $typename = $this->controller_type_name[$value];
-                        echo " $key:$value($typename),";
+                       echo " $key:$value($typename),";
                         break;
                       case 'SystemEx':
                       case 'SystemExCont':
                       case 'MetaEventData':
-                        echo " $key:";
+                       echo " $key:";
                         $dataLen = strlen($value);
-                        for ($i = 0 ; $i < $dataLen; $i++) {
-                            printf(" %02x", ord($value{$i}));
-                        }
                         if (($key === 'MetaEventData') && ($meta_event_type === 0x05)) {
-                            echo " ($value)";
+                            echo mb_convert_encoding( $value, "UTF-8" , "SJIS");
                         }
+                        echo "(";
+                        for ($i = 0 ; $i < $dataLen; $i++) {
+                           printf("%02x", ord($value{$i}));
+                        }
+                        echo ")";
                         break;
                       default:
-                        echo " $key:$value,";
+                       echo " $key:$value,";
                         break;
                     }
                 }
@@ -427,6 +433,7 @@ class IO_MIDI {
         }
         return $writer->output();
     }
+
     function _buildChunk(&$writer, $chunk, $opts) {
         $type = $chunk['type'];
         $writerChunk = new IO_Bit();
@@ -446,12 +453,14 @@ class IO_MIDI {
         $writer->putUI32BE($length);
         $writer->putData($chunkData, $length);
     }
+
     function _buildChunkHeader(&$writer, $header, $opts) {
         $writer->putUI16BE($header['Format']);
         $writer->putUI16BE($header['NumberOfTracks']);
         $division = ($header['DivisionFlag'] << 15) || $header['Division'];
         $writer->putUI16BE($division);
     }
+
     function _buildChunkTrack(&$writer, $track, $opts) {
         $prev_status = null;
         foreach ($track as $chunk) {
@@ -541,6 +550,7 @@ class IO_MIDI {
            }
         }
     }
+
     function putVaribleLengthValue($writer, $value) {
         $binList = Array();
         if ($value === 0) {
