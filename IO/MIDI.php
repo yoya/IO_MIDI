@@ -40,6 +40,12 @@ class IO_MIDI {
           case 'MTrk':
               $chunk['track'] = $this->_parseChunkTrack($reader, $nextOffset);
               break;
+          case 'XFIH': //
+              $chunk['xfinfo'] = $this->_parseChunkXFInfo($reader, $nextOffset);
+              break;
+          case 'XFKM':
+              $chunk['xfkaraoke'] = $this->_parseChunkXFKaraoke($reader, $nextOffset);
+              break;
           default:
 	      fprintf(STDERR, "warning: Unknown chunk (type=$type)\n");
 	      return array();
@@ -156,6 +162,36 @@ class IO_MIDI {
         return $track;
     }
 
+    function _parseChunkXFInfo($reader, $nextOffset) {
+        while (true) {
+            list($offset, $dummy) = $reader->getOffset();
+            if ($offset >= $nextOffset) {
+                break; // done
+            }
+	    $chunk = array('_offset' => $offset);
+            // delta time
+            $chunk['DeltaTime'] = $this->getVaribleLengthValue($reader);
+            $status = $reader->getUI8(); // status byte
+	    if ($status !== 0xFF) {
+	        fprintf(STDERR, "Unknown status in XFInfoHeader\n");
+	        break; // failed
+	    }
+	    $type = $reader->getUI8();
+	    $chunk['MetaEventType'] = $type;
+	    switch ($type) {
+	      case 0x01:
+	        $length = $this->getVaribleLengthValue($reader);
+		$chunk['MetaEventData'] = $reader->getData($length);
+		break;
+	    
+	    }
+
+        }
+    	;
+    }
+    function _parseChunkXFKaraoke($reader, $nextOffset) {
+        ;
+    }
     function getVaribleLengthValue($reader) {
         $ret_value = 0;
         while (true) {
