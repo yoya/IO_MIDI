@@ -22,7 +22,12 @@ class IO_MIDI {
                 $this->header = $chunk;
             } elseif(isset($chunk['track'])) {
                 $this->tracks []= $chunk;
+            } elseif(isset($chunk['xfinfo'])) {
+                $this->xfinfo = $chunk;
+            } elseif(isset($chunk['xfkaraoke'])) {
+                $this->xfkaraoke []= $chunk;
             } else {
+	        fprintf(STDERR, "Can't parse chunk.\n");
 	        break;
 	    }
         }
@@ -163,6 +168,7 @@ class IO_MIDI {
     }
 
     function _parseChunkXFInfo($reader, $nextOffset) {
+        $xfinfo = array();
         while (true) {
             list($offset, $dummy) = $reader->getOffset();
             if ($offset >= $nextOffset) {
@@ -173,7 +179,8 @@ class IO_MIDI {
             $chunk['DeltaTime'] = $this->getVaribleLengthValue($reader);
             $status = $reader->getUI8(); // status byte
 	    if ($status !== 0xFF) {
-	        fprintf(STDERR, "Unknown status in XFInfoHeader\n");
+                list($o, $dummy) = $reader->getOffset();
+                fprintf(STDERR, "Unknown format(0x%02X) offset(0x%x) in XFInfoHeader\n", $status, $o - 1);
 	        break; // failed
 	    }
 	    $type = $reader->getUI8();
@@ -183,18 +190,22 @@ class IO_MIDI {
 	        $length = $this->getVaribleLengthValue($reader);
     		$chunk['MetaEventData'] = $reader->getData($length);
 		break;
-          case 0x2f:
-        break;
-        default:
-                fprintf(STDERR, "Unknown format(0x%02X) offset(0x%x) in XFInfoHeader\n", $status, $o - 1);
-        break;
+              case 0x2F: // End of Track
+	        $length = $this->getVaribleLengthValue($reader);
+                break;
+              default:
+                list($o, $dummy) = $reader->getOffset();
+                fprintf(STDERR, "Unknown type(0x%02X) offset(0x%x) in XFInfoHeader\n", $type, $o - 1);
+              break;
 	    }
-
+	    $xfinfo[] = $chunk;
         }
-    	;
+    	return $xfinfo;
     }
     function _parseChunkXFKaraoke($reader, $nextOffset) {
-        ;
+        $xfkaraoke = array();
+	
+        return $xfkaraoke;
     }
     function getVaribleLengthValue($reader) {
         $ret_value = 0;
@@ -505,7 +516,6 @@ class IO_MIDI {
                 }
               default:
                 printf("unknown EventType=0x%02X\n", $eventType);
-                var_dump($chunks);
                 exit (0);
 	   }
 	}
