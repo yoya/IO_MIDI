@@ -200,13 +200,45 @@ class IO_MIDI {
             }
             $xfinfo[] = $chunk;
         }
-            return $xfinfo;
+        return $xfinfo;
     }
+
     function _parseChunkXFKaraoke($reader, $nextOffset) {
         $xfkaraoke = array();
-        
+        while (true) {
+            list($offset, $dummy) = $reader->getOffset();
+            if ($offset >= $nextOffset) {
+                break; // done
+            }
+            $chunk = array('_offset' => $offset);
+            // delta time
+            $chunk['DeltaTime'] = $this->getVaribleLengthValue($reader);
+            $status = $reader->getUI8(); // status byte
+            if ($status !== 0xFF) {
+                list($o, $dummy) = $reader->getOffset();
+                fprintf(STDERR, "Unknown status(0x%02X) offset(0x%x) in xfkaraokeHeader\n", $status, $o - 1);
+                break; // failed
+            }
+            $type = $reader->getUI8();
+            $chunk['MetaEventType'] = $type;
+            switch ($type) {
+              case 0x05:    //karaoke
+                $length = $this->getVaribleLengthValue($reader);
+                $chunk['MetaEventData'] = $reader->getData($length);
+                break;
+              case 0x2F: // End of Track
+                $length = $this->getVaribleLengthValue($reader);
+                break;
+              default:
+                list($o, $dummy) = $reader->getOffset();
+                fprintf(STDERR, "Unknown type(0x%02X) offset(0x%x) in xfkaraokeHeader\n", $type, $o - 1);
+              break;
+            }
+            $xfkaraoke[] = $chunk;
+        }
         return $xfkaraoke;
     }
+
     function getVaribleLengthValue($reader) {
         $ret_value = 0;
         while (true) {
@@ -330,7 +362,8 @@ class IO_MIDI {
         123 => 'AllNotesOff',
         124 => 'OmniModeOff', 125 => 'OmniModeOn',
         126 => 'MonoOperation', 127 => 'PolyOperation',
-        );
+    );
+
     function dump($opts = array()) {
         if (empty($opts['hexdump']) === false) {
             $bitio = new IO_Bit();
@@ -396,8 +429,8 @@ class IO_MIDI {
                 }
             }
         }
-
     }
+
     function build($opts = array()) {
         $writer = new IO_Bit();
         $this->_buildChunk($writer, $this->header, $opts);
