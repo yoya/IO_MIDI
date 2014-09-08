@@ -187,6 +187,8 @@ class IO_MIDI {
             $chunk['MetaEventType'] = $reader->getUI8();
             $length = $this->getVaribleLengthValue($reader);
             $chunk['MetaEventData'] = $reader->getData($length);
+            list($offset2, $dummy) = $reader->getOffset();
+            $chunk['_length'] = $offset2 - $offset;
             $xfinfo[] = $chunk;
         }
         return $xfinfo;
@@ -227,6 +229,8 @@ class IO_MIDI {
                 fprintf(STDERR, "Unknown type(0x%02X) offset(0x%x) in xfkaraokeHeader\n", $type, $o - 1);
               break;
             }
+            list($offset2, $dummy) = $reader->getOffset();
+            $chunk['_length'] = $offset2 - $offset;
             $xfkaraoke[] = $chunk;
         }
         return $xfkaraoke;
