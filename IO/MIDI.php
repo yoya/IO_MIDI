@@ -215,6 +215,10 @@ class IO_MIDI {
                 $length = $this->getVaribleLengthValue($reader);
                 $chunk['MetaEventData'] = $reader->getData($length);
                 break;
+              case 0x07: // ????
+                $length = $this->getVaribleLengthValue($reader);
+                $chunk['MetaEventData'] = $reader->getData($length);
+                break;
               case 0x2F: // End of Track
                 $length = $this->getVaribleLengthValue($reader);
                 break;
