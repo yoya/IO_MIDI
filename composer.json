@@ -3,7 +3,7 @@
     "type": "library",
     "description": "MIDI library",
     "keywords": ["midi", "music"],
-    "homepage": "",
+    "homepage": "http://pwiki.awm.jp/~yoya/?IO_MIDI",
     "version": "1.0.5",
     "license": "MIT",
     "authors": [
