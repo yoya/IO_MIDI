@@ -4,7 +4,6 @@
     "description": "MIDI library",
     "keywords": ["midi", "music"],
     "homepage": "http://pwiki.awm.jp/~yoya/?IO_MIDI",
-    "version": "1.0.5",
     "license": "MIT",
     "authors": [
         {
@@ -14,9 +13,9 @@
     ],
     "require": {
         "php": ">=5.1.0",
-	"yoya/io_bit": ">=2.1.1"
+        "yoya/io_bit": "~2.1"
     },
     "autoload": {
-        "psr-0": { "IO\\MIDI": "src/" }
+        "psr-0": { "IO_MIDI": "." }
     }
 }
