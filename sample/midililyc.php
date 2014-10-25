@@ -32,6 +32,9 @@ $midi = new IO_MIDI();
 $midi->parse($mididata);
 
 $tracks = $midi->tracks;
+if ($midi->xfkaraoke) {
+   $tracks = array_merge($tracks, array(array('track' =>  $midi->xfkaraoke["xfkaraoke"])));
+}
 
 $count = 0;
 
@@ -50,7 +53,8 @@ foreach ($tracks as $idx => $track) {
     foreach ($track['track'] as $key => $chunk) {
         if(isset($chunk['MetaEventType']) && $chunk['MetaEventType'] == 0x5){
 	    if ($textFlag) {
-	        echo $chunk["MetaEventData"]."\n";
+	        $value = $chunk["MetaEventData"]."\n";
+                echo "[$key]:".mb_convert_encoding( $value, "UTF-8" , "SJIS");
             }
 	    $count ++;
         }
