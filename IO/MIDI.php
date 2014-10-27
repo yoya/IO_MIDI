@@ -374,6 +374,7 @@ class IO_MIDI {
             $bitio->hexdump(0, $this->header['length'] + 8);
         }
 
+        $xfkaraoke_with_track = $this->tracks;
         $xfkaraoke_with_track["karaoke"] =  $this->xfkaraoke;
         $xfkaraoke_with_track["karaoke"]["track"] = $this->xfkaraoke["xfkaraoke"];
         foreach ($xfkaraoke_with_track as $idx => $track) {
