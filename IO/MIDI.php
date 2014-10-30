@@ -10,6 +10,7 @@ class IO_MIDI {
     var $header = null;
 //    var $track_list = array();
     var $tracks = array();
+    var $xfkaraoke = null;
     var $_mididata = null;
 
     function parse($mididata) {
@@ -375,8 +376,10 @@ class IO_MIDI {
         }
 
         $xfkaraoke_with_track = $this->tracks;
-        $xfkaraoke_with_track["karaoke"] =  $this->xfkaraoke;
-        $xfkaraoke_with_track["karaoke"]["track"] = $this->xfkaraoke["xfkaraoke"];
+	if ($this->xfkaraoke !== null) {
+	    $xfkaraoke_with_track["karaoke"] =  $this->xfkaraoke;
+            $xfkaraoke_with_track["karaoke"]["track"] = $this->xfkaraoke["xfkaraoke"];
+        }
         foreach ($xfkaraoke_with_track as $idx => $track) {
            echo "TRACK[$idx]:\n";
             if (empty($opts['hexdump']) === false) {
