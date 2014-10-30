@@ -443,6 +443,12 @@ class IO_MIDI {
         foreach ($this->tracks as $track) {
             $this->_buildChunk($writer, $track, $opts);
         }
+	if ($this->xfinfo) {
+            $this->_buildChunk($writer, $this->xfinfo, $opts);
+        }
+	if ($this->xfkaraoke) {
+            $this->_buildChunk($writer, $this->xfkaraoke, $opts);
+        }
         return $writer->output();
     }
 
@@ -455,6 +461,12 @@ class IO_MIDI {
               break;
           case 'MTrk':
               $this->_buildChunkTrack($writerChunk, $chunk['track'], $opts);
+              break;
+          case 'XFIH':
+              $this->_buildChunkXFInfo($writerChunk, $chunk['xfinfo'], $opts);
+              break;
+          case 'XFKM':
+              $this->_buildChunkXFKaraoke($writerChunk, $chunk['xfkaraoke'], $opts);
               break;
           default:
               throw new Exception("Unknown chunk (type=$type)\n");
@@ -560,6 +572,33 @@ class IO_MIDI {
                 printf("unknown EventType=0x%02X\n", $eventType);
                 exit (0);
            }
+        }
+    }
+
+    function _buildChunkXFInfo(&$writer, $xfinfo, $opts) {
+        foreach ($xfinfo as $chunk) {
+            $this->putVaribleLengthValue($writer, $chunk['DeltaTime']);
+            $writer->putUI8(0xFF); // status byte
+            $writer->putUI8($chunk['MetaEventType']);
+	    $length = strlen($chunk['MetaEventData']);
+            $this->putVaribleLengthValue($writer, $length);
+            $writer->putData($chunk['MetaEventData'], $length);
+        }
+    }
+
+    function _buildChunkXFKaraoke(&$writer, $xfkaraoke, $opts) {
+	foreach ($xfkaraoke as $chunk) {
+	    $this->putVaribleLengthValue($writer, $chunk['DeltaTime']);
+            $writer->putUI8(0xFF); // status byte
+	    $type =  $chunk['MetaEventType'];
+            $writer->putUI8($type);
+	    if ($type == 0x2F) { // End of Track
+	        $this->putVaribleLengthValue($writer, 0);
+            } else {
+                $length = strlen($chunk['MetaEventData']);
+                $this->putVaribleLengthValue($writer, $length);
+                $writer->putData($chunk['MetaEventData'], $length);
+            }
         }
     }
 
