@@ -469,7 +469,7 @@ class IO_MIDI {
     function _buildChunkHeader(&$writer, $header, $opts) {
         $writer->putUI16BE($header['Format']);
         $writer->putUI16BE($header['NumberOfTracks']);
-        $division = ($header['DivisionFlag'] << 15) || $header['Division'];
+        $division = ($header['DivisionFlag'] << 15) | $header['Division'];
         $writer->putUI16BE($division);
     }
 
