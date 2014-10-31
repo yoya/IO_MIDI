@@ -5,8 +5,8 @@ require_once 'IO/MIDI.php';
 $options = getopt("f:hv");
 
 if ((isset($options['f']) === false) || (is_readable($options['f']) === false)) {
-    echo "Usage: php mididump.php -f <midi_file> [-h]\n";
-    echo "ex) php mididump.php -f test.mid -h \n";
+    fprintf(STDERR, "Usage: php mididump.php -f <midi_file> [-h]\n");
+    fprintf(STDERR, "ex) php mididump.php -f test.mid -h \n");
     exit(1);
 }
 
