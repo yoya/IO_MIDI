@@ -8,7 +8,6 @@ require_once 'IO/Bit.php';
 
 class IO_MIDI {
     var $header = null;
-//    var $track_list = array();
     var $tracks = array();
     var $xfinfo = null;
     var $xfkaraoke = null;
@@ -620,7 +619,7 @@ class IO_MIDI {
                    $prev_status = $status;
                }
             }
-	    $type =  $chunk['MetaEventType'];
+	    $type = $chunk['MetaEventType'];
             $writer->putUI8($type);
 	    if ($type == 0x2F) { // End of Track
 	        $this->putVaribleLengthValue($writer, 0);
