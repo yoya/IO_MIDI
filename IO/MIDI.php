@@ -79,6 +79,7 @@ class IO_MIDI {
     function _parseChunkTrack($reader, $nextOffset) {
         $track = array();
         $prev_status = null;
+	$time = 0;
         while (true) {
             list($offset, $dummy) = $reader->getOffset();
             if ($offset >= $nextOffset) {
@@ -86,7 +87,9 @@ class IO_MIDI {
             }
             $chunk = array('_offset' => $offset);
             // delta time
-            $chunk['DeltaTime'] = $this->getVaribleLengthValue($reader);
+	    $deltaTime = $this->getVaribleLengthValue($reader);
+            $chunk['DeltaTime'] = $deltaTime;
+	    $time += $deltaTime;
             // event
             $status = $reader->getUI8(); // status byte
             while ($status < 0x80) { // running status
@@ -164,6 +167,7 @@ class IO_MIDI {
             }
             list($offset2, $dummy) = $reader->getOffset();
             $chunk['_length'] = $offset2 - $offset;
+	    $chunk['_time'] = $time;
             $track[] = $chunk;
             $prev_status = $status;
         }
@@ -198,6 +202,7 @@ class IO_MIDI {
 
     function _parseChunkXFKaraoke($reader, $nextOffset) {
         $xfkaraoke = array();
+	$time = 0;
         while (true) {
             list($offset, $dummy) = $reader->getOffset();
             if ($offset >= $nextOffset) {
@@ -205,7 +210,10 @@ class IO_MIDI {
             }
             $chunk = array('_offset' => $offset);
             // delta time
-            $chunk['DeltaTime'] = $this->getVaribleLengthValue($reader);
+	    $deltaTime = $this->getVaribleLengthValue($reader);
+            $chunk['DeltaTime'] = $deltaTime;
+	    $time += $deltaTime;
+	    // event
             $status = $reader->getUI8(); // status byte
             if ($status !== 0xFF) {
                 list($o, $dummy) = $reader->getOffset();
@@ -233,6 +241,7 @@ class IO_MIDI {
             }
             list($offset2, $dummy) = $reader->getOffset();
             $chunk['_length'] = $offset2 - $offset;
+	    $chunk['_time'] = $time;
             $xfkaraoke[] = $chunk;
         }
         return $xfkaraoke;
