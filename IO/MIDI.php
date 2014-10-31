@@ -10,6 +10,7 @@ class IO_MIDI {
     var $header = null;
 //    var $track_list = array();
     var $tracks = array();
+    var $xfinfo = null;
     var $xfkaraoke = null;
     var $_mididata = null;
 
@@ -576,9 +577,18 @@ class IO_MIDI {
     }
 
     function _buildChunkXFInfo(&$writer, $xfinfo, $opts) {
+        $prev_status = null;
         foreach ($xfinfo as $chunk) {
             $this->putVaribleLengthValue($writer, $chunk['DeltaTime']);
-            $writer->putUI8(0xFF); // status byte
+     	    $status = 0xFF; // MetaEvent
+            if (empty($opts['runningstatus']) === true) {
+               $writer->putUI8($status);
+            } else {
+               if ($prev_status !== $status) {
+                   $writer->putUI8($status);
+                   $prev_status = $status;
+               }
+            }
             $writer->putUI8($chunk['MetaEventType']);
 	    $length = strlen($chunk['MetaEventData']);
             $this->putVaribleLengthValue($writer, $length);
@@ -587,9 +597,18 @@ class IO_MIDI {
     }
 
     function _buildChunkXFKaraoke(&$writer, $xfkaraoke, $opts) {
+        $prev_status = null;
 	foreach ($xfkaraoke as $chunk) {
 	    $this->putVaribleLengthValue($writer, $chunk['DeltaTime']);
-            $writer->putUI8(0xFF); // status byte
+     	    $status = 0xFF; // MetaEvent
+            if (empty($opts['runningstatus']) === true) {
+               $writer->putUI8($status);
+            } else {
+               if ($prev_status !== $status) {
+                   $writer->putUI8($status);
+                   $prev_status = $status;
+               }
+            }
 	    $type =  $chunk['MetaEventType'];
             $writer->putUI8($type);
 	    if ($type == 0x2F) { // End of Track
