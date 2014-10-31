@@ -2,7 +2,7 @@
 
 require_once 'IO/MIDI.php';
 
-$options = getopt("f:h");
+$options = getopt("f:hv");
 
 if ((isset($options['f']) === false) || (is_readable($options['f']) === false)) {
     echo "Usage: php mididump.php -f <midi_file> [-h]\n";
@@ -18,6 +18,9 @@ $midi->parse($mididata);
 $opts = array();
 if (isset($options['h'])) {
     $opts['hexdump'] = true;
+}
+if (isset($options['v'])) {
+    $opts['verbose'] = true;
 }
 
 $midi->dump($opts);

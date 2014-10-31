@@ -402,7 +402,7 @@ class IO_MIDI {
                         if (isset($this->meta_event_name[$value])) {
                             $meta_event_type = $value;
                             $eventname = $this->meta_event_name[$value];
-                           echo " $key:$value($eventname)";
+                           echo " $key:$value($eventname),";
                         } else {
                            echo " $key:$value,";
                         }
@@ -426,7 +426,9 @@ class IO_MIDI {
                         echo ")";
                         break;
                       default:
-                       echo " $key:$value,";
+		        if (($key[0] !== '_') || (empty($opts['verbose']) === false)) {
+                            echo " $key:$value,";
+			}
                         break;
                     }
                 }
