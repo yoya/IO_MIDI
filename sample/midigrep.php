@@ -5,8 +5,8 @@ require_once 'IO/MIDI.php';
 $options = getopt("f:c:r");
 
 if ((isset($options['f']) === false) || (is_readable($options['f']) === false) || (isset($options['c']) === false)) {
-    echo "Usage: php midigrep.php -f <midi_file> [-r] -c <channel>\n";
-    echo "ex) php midigrep.php -f in.mid -c 0\n";
+    fprintf(STDERR, "Usage: php midigrep.php -f <midi_file> [-r] -c <channel>\n");
+    fprintf(STDERR, "ex) php midigrep.php -f in.mid -c 0\n");
     exit(1);
 }
 
