@@ -12,6 +12,7 @@ class IO_MIDI {
     var $xfinfo = null;
     var $xfkaraoke = null;
     var $_mididata = null;
+    var $_scaleCharactor = null;
 
     function parse($mididata) {
         $this->_mididata = $mididata;
@@ -390,6 +391,7 @@ class IO_MIDI {
             $xfkaraoke_with_track["karaoke"]["track"] = $this->xfkaraoke["xfkaraoke"];
         }
         foreach ($xfkaraoke_with_track as $idx => $track) {
+           $scaleCharactors = array('C','C#','D','D#','E','F','F#','G','G#','A','A#','B');
            echo "TRACK[$idx]:\n";
             if (empty($opts['hexdump']) === false) {
                 $bitio->hexdump($track['_offset'], 8);
@@ -432,6 +434,11 @@ class IO_MIDI {
                            printf("%02x", ord($value{$i}));
                         }
                         echo ")";
+                        break;
+                      case 'NoteNumber':
+		            $noteoct = floor($value / 12);
+		            $notekey = $scaleCharactors[$value % 12];
+                            echo " $key:$value($notekey$noteoct),";
                         break;
                       default:
 		        if (($key[0] !== '_') || (empty($opts['verbose']) === false)) {
