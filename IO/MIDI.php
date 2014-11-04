@@ -583,6 +583,11 @@ class IO_MIDI {
                     $this->putVaribleLengthValue($writer, $length);
                     $writer->putData($chunk['SystemEx'], $length);
                     break;
+                } else if ($midiChannel == 0x7) { // System Ex Cont
+                    $length = strlen($chunk['SystemExCont']);
+                    $this->putVaribleLengthValue($writer, $length);
+                    $writer->putData($chunk['SystemExCont'], $length);
+                    break;
                 } else {
                     printf("unknown status=0x%02X\n", $status);
                 }
