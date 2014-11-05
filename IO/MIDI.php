@@ -409,8 +409,8 @@ class IO_MIDI {
                       echo " $key:$value($eventname),";
                         break;
                       case 'MetaEventType':
+                        $meta_event_type = $value;
                         if (isset($this->meta_event_name[$value])) {
-                            $meta_event_type = $value;
                             $eventname = $this->meta_event_name[$value];
                            echo " $key:$value($eventname),";
                         } else {
