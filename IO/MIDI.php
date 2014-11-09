@@ -79,7 +79,7 @@ class IO_MIDI {
     function _parseChunkTrack($reader, $nextOffset) {
         $track = array();
         $prev_status = null;
-	$time = 0;
+        $time = 0;
         while (true) {
             list($offset, $dummy) = $reader->getOffset();
             if ($offset >= $nextOffset) {
@@ -87,9 +87,9 @@ class IO_MIDI {
             }
             $chunk = array('_offset' => $offset);
             // delta time
-	    $deltaTime = $this->getVaribleLengthValue($reader);
+            $deltaTime = $this->getVaribleLengthValue($reader);
             $chunk['DeltaTime'] = $deltaTime;
-	    $time += $deltaTime;
+            $time += $deltaTime;
             // event
             $status = $reader->getUI8(); // status byte
             while ($status < 0x80) { // running status
@@ -167,7 +167,7 @@ class IO_MIDI {
             }
             list($offset2, $dummy) = $reader->getOffset();
             $chunk['_length'] = $offset2 - $offset;
-	    $chunk['_time'] = $time;
+            $chunk['_time'] = $time;
             $track[] = $chunk;
             $prev_status = $status;
         }
@@ -202,7 +202,7 @@ class IO_MIDI {
 
     function _parseChunkXFKaraoke($reader, $nextOffset) {
         $xfkaraoke = array();
-	$time = 0;
+        $time = 0;
         while (true) {
             list($offset, $dummy) = $reader->getOffset();
             if ($offset >= $nextOffset) {
@@ -210,10 +210,10 @@ class IO_MIDI {
             }
             $chunk = array('_offset' => $offset);
             // delta time
-	    $deltaTime = $this->getVaribleLengthValue($reader);
+            $deltaTime = $this->getVaribleLengthValue($reader);
             $chunk['DeltaTime'] = $deltaTime;
-	    $time += $deltaTime;
-	    // event
+            $time += $deltaTime;
+            // event
             $status = $reader->getUI8(); // status byte
             if ($status !== 0xFF) {
                 list($o, $dummy) = $reader->getOffset();
@@ -241,7 +241,7 @@ class IO_MIDI {
             }
             list($offset2, $dummy) = $reader->getOffset();
             $chunk['_length'] = $offset2 - $offset;
-	    $chunk['_time'] = $time;
+            $chunk['_time'] = $time;
             $xfkaraoke[] = $chunk;
         }
         return $xfkaraoke;
@@ -386,8 +386,8 @@ class IO_MIDI {
         }
 
         $xfkaraoke_with_track = $this->tracks;
-	if ($this->xfkaraoke !== null) {
-	    $xfkaraoke_with_track["karaoke"] =  $this->xfkaraoke;
+        if ($this->xfkaraoke !== null) {
+            $xfkaraoke_with_track["karaoke"] =  $this->xfkaraoke;
             $xfkaraoke_with_track["karaoke"]["track"] = $this->xfkaraoke["xfkaraoke"];
         }
         foreach ($xfkaraoke_with_track as $idx => $track) {
@@ -427,11 +427,11 @@ class IO_MIDI {
                        echo " $key:";
                         $dataLen = strlen($value);
                         if ($key === 'MetaEventData') {
-			   if ($meta_event_type === 0x05) { // Lyric
-			       echo mb_convert_encoding( $value, "UTF-8" , "SJIS");
-			   } elseif ($meta_event_type === 0x07) { // Cue Point
+                           if ($meta_event_type === 0x05) { // Lyric
+                               echo mb_convert_encoding( $value, "UTF-8" , "SJIS");
+                           } elseif ($meta_event_type === 0x07) { // Cue Point
                                echo $value;
-			   }
+                           }
                         }
                         echo "(";
                         for ($i = 0 ; $i < $dataLen; $i++) {
@@ -440,14 +440,14 @@ class IO_MIDI {
                         echo ")";
                         break;
                       case 'NoteNumber':
-		            $noteoct = floor($value / 12);
-		            $notekey = $scaleCharactors[$value % 12];
+                            $noteoct = floor($value / 12);
+                            $notekey = $scaleCharactors[$value % 12];
                             echo " $key:$value($notekey$noteoct),";
                         break;
                       default:
-		        if (($key[0] !== '_') || (empty($opts['verbose']) === false)) {
+                        if (($key[0] !== '_') || (empty($opts['verbose']) === false)) {
                             echo " $key:$value,";
-			}
+                        }
                         break;
                     }
                 }
@@ -465,10 +465,10 @@ class IO_MIDI {
         foreach ($this->tracks as $track) {
             $this->_buildChunk($writer, $track, $opts);
         }
-	if ($this->xfinfo) {
+        if ($this->xfinfo) {
             $this->_buildChunk($writer, $this->xfinfo, $opts);
         }
-	if ($this->xfkaraoke) {
+        if ($this->xfkaraoke) {
             $this->_buildChunk($writer, $this->xfkaraoke, $opts);
         }
         return $writer->output();
@@ -601,7 +601,7 @@ class IO_MIDI {
         $prev_status = null;
         foreach ($xfinfo as $chunk) {
             $this->putVaribleLengthValue($writer, $chunk['DeltaTime']);
-     	    $status = 0xFF; // MetaEvent
+            $status = 0xFF; // MetaEvent
             if (empty($opts['runningstatus']) === true) {
                $writer->putUI8($status);
             } else {
@@ -611,7 +611,7 @@ class IO_MIDI {
                }
             }
             $writer->putUI8($chunk['MetaEventType']);
-	    $length = strlen($chunk['MetaEventData']);
+            $length = strlen($chunk['MetaEventData']);
             $this->putVaribleLengthValue($writer, $length);
             $writer->putData($chunk['MetaEventData'], $length);
         }
@@ -619,9 +619,9 @@ class IO_MIDI {
 
     function _buildChunkXFKaraoke(&$writer, $xfkaraoke, $opts) {
         $prev_status = null;
-	foreach ($xfkaraoke as $chunk) {
-	    $this->putVaribleLengthValue($writer, $chunk['DeltaTime']);
-     	    $status = 0xFF; // MetaEvent
+        foreach ($xfkaraoke as $chunk) {
+            $this->putVaribleLengthValue($writer, $chunk['DeltaTime']);
+                 $status = 0xFF; // MetaEvent
             if (empty($opts['runningstatus']) === true) {
                $writer->putUI8($status);
             } else {
@@ -630,10 +630,10 @@ class IO_MIDI {
                    $prev_status = $status;
                }
             }
-	    $type = $chunk['MetaEventType'];
+            $type = $chunk['MetaEventType'];
             $writer->putUI8($type);
-	    if ($type == 0x2F) { // End of Track
-	        $this->putVaribleLengthValue($writer, 0);
+            if ($type == 0x2F) { // End of Track
+                $this->putVaribleLengthValue($writer, 0);
             } else {
                 $length = strlen($chunk['MetaEventData']);
                 $this->putVaribleLengthValue($writer, $length);
