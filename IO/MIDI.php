@@ -277,7 +277,7 @@ class IO_MIDI {
         0x02 => 'Copyright Notice',
         0x03 => 'Sequence/Track Name',
         0x04 => 'Instrument Name',
-        0x05 => 'Lylic',
+        0x05 => 'Lyric',
         0x06 => 'Marker',
         0x07 => 'Cue Point',
         0x20 => 'MIDI Channel Prefix',
@@ -409,8 +409,8 @@ class IO_MIDI {
                       echo " $key:$value($eventname),";
                         break;
                       case 'MetaEventType':
+                        $meta_event_type = $value;
                         if (isset($this->meta_event_name[$value])) {
-                            $meta_event_type = $value;
                             $eventname = $this->meta_event_name[$value];
                            echo " $key:$value($eventname),";
                         } else {
@@ -586,6 +586,11 @@ class IO_MIDI {
                     $length = strlen($chunk['SystemEx']);
                     $this->putVaribleLengthValue($writer, $length);
                     $writer->putData($chunk['SystemEx'], $length);
+                    break;
+                } else if ($midiChannel == 0x7) { // System Ex Cont
+                    $length = strlen($chunk['SystemExCont']);
+                    $this->putVaribleLengthValue($writer, $length);
+                    $writer->putData($chunk['SystemExCont'], $length);
                     break;
                 } else {
                     printf("unknown status=0x%02X\n", $status);
