@@ -426,8 +426,12 @@ class IO_MIDI {
                       case 'MetaEventData':
                        echo " $key:";
                         $dataLen = strlen($value);
-                        if (($key === 'MetaEventData') && ($meta_event_type === 0x05)) {
-                            echo mb_convert_encoding( $value, "UTF-8" , "SJIS");
+                        if ($key === 'MetaEventData') {
+			   if ($meta_event_type === 0x05) { // Lyric
+			       echo mb_convert_encoding( $value, "UTF-8" , "SJIS");
+			   } elseif ($meta_event_type === 0x07) { // Cue Point
+                               echo $value;
+			   }
                         }
                         echo "(";
                         for ($i = 0 ; $i < $dataLen; $i++) {
