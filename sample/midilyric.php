@@ -50,12 +50,14 @@ if ($textFlag) {
 }
 
 foreach ($tracks as $idx => $track) {
+    $currentTime = 0;
     foreach ($track['track'] as $key => $chunk) {
         if(isset($chunk['MetaEventType']) && $chunk['MetaEventType'] == 0x5){
 	    if ($textFlag) {
-                $t = $chunk['_time'];
+                $dt = $chunk['_time'] - $currentTime;
+		$currentTime = $chunk['_time'];
 	        $value = $chunk["MetaEventData"]."\n";
-                echo "[$key][t:$t]:".mb_convert_encoding( $value, "UTF-8" , "SJIS");
+                echo "[$key,dt:$dt,t:$currentTime]:".mb_convert_encoding( $value, "UTF-8" , "SJIS");
             }
 	    $count ++;
         }
