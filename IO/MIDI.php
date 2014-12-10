@@ -270,7 +270,7 @@ class IO_MIDI {
         0xC => 'Program Change',
         0xD => 'Note Aftertouch Event',
         0xE => 'Pitch Bend Event',
-        0xF => 'System Exclusive',
+        0xF => 'System Exclusive or Meta Event',
         );
     var $meta_event_name = array(
         0x00 => 'Sequence Number',
@@ -402,10 +402,18 @@ class IO_MIDI {
                 foreach ($chunk as $key => $value) {
                     switch ($key) {
                       case 'EventType':
-                        if ($value < 0xFF) {
+                        if ($value < 0xF) {
                             $eventname = $this->event_name[$value];
                         } else {
-                            $eventname = "Meta Event";
+                            if (isset($chunk['SystemEx'])) {
+                                $eventname = "System Exclusive";
+                            } elseif (isset($chunk['SystemExCont'])) {
+                                $eventname = "System Exclusive Cont";
+                            } elseif (isset($chunk['MetaEventType'])) {
+                                $eventname = "Meta Event";
+                            } else {
+                                $eventname = "Unknown";
+                            }
                         }
                       echo " $key:$value($eventname),";
                         break;
