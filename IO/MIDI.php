@@ -5,6 +5,7 @@
    */
 
 require_once 'IO/Bit.php';
+require_once('IO/MIDI/SysEx.php');
 
 class IO_MIDI {
     var $header = null;
@@ -438,6 +439,11 @@ class IO_MIDI {
                            printf("%02x", ord($value{$i}));
                         }
                         echo ")";
+                        if ($key === 'SystemEx') {
+                            echo "\n";
+                            $sysex = new IO_MIDI_SysEx();
+                            $sysex->dumpPayload($value);
+                        }
                         break;
                       case 'NoteNumber':
                             $noteoct = floor($value / 12);
