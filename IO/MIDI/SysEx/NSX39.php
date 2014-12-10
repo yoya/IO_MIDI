@@ -94,8 +94,8 @@ class IO_MIDI_SysEx_NSX39 {
          'TIME_WAIT'      => array("\x0d\x00\x00\x00", "\x0d\x7f\x7f\x7f"),
 		 //
          'DIRECT_MIDI_OUT_3' => array("\x10\x00\x00\x00", "\x17\x7f\x7f\x7f"),
-         'DIRECT_MIDI_OUT_2' => array("\x1A\x00\x00\x00", "\x1A\x7f\x7f\x7f"),
-         'DIRECT_MIDI_OUT_1' => array("\x19\x00\x00\x00", "\x19\x7f\x7f\x7f"),
+         'DIRECT_MIDI_OUT_2' => array("\x1A\x00\x00\x00", "\x1A\x03\x7f\x7f"),
+         'DIRECT_MIDI_OUT_1' => array("\x19\x00\x00\x00", "\x19\x00\x01\x7f"),
 		 //
          'SLOT_EXE' => array("\x0a\x48\x00\x00", "\x0a\x47\00\x7f"),
         );
