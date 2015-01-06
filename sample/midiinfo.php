@@ -115,7 +115,9 @@ foreach ($tracks as $idx => $track) {
             echo "  NoteOffCount: ".$noteOffTable[$channel];
         }
         $noteKeyList = array_keys($noteKeyTable[$channel]);
-        echo "  KeyRange: ".MIN($noteKeyList)." <-> ".MAX($noteKeyList);
+        if($noteKeyList){
+            echo "  KeyRange: ".MIN($noteKeyList)." <-> ".MAX($noteKeyList);
+        }
         echo PHP_EOL;
         if ($pitchbendTable[$channel] > 0) {
             $pitchbendRangeList = array_keys($pitchbendRangeTable[$channel]);
