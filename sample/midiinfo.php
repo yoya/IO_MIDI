@@ -101,7 +101,11 @@ foreach ($tracks as $idx => $track) {
     sort($channelList);
     echo "    Channel: ".implode(' ', $channelList).PHP_EOL;
     foreach ($channelList as $channel) {
-        $programs = $programTable[$channel];
+        if (isset($programTable[$channel])) {
+            $programs = $programTable[$channel];
+        } else {
+            $programs = Array('(none)');
+        }
         echo "      Channel[$channel]:".PHP_EOL;
         echo "        Program: ".implode(' ', $programs).PHP_EOL;
         if ($noteOnTable[$channel] === $noteOffTable[$channel]) {
