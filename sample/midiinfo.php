@@ -116,6 +116,7 @@ foreach ($tracks as $idx => $track) {
         }
         $noteKeyList = array_keys($noteKeyTable[$channel]);
         if($noteKeyList){
+
             echo "  KeyRange: ".MIN($noteKeyList)." <-> ".MAX($noteKeyList);
         }
         echo PHP_EOL;
