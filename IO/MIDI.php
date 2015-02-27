@@ -100,7 +100,7 @@ class IO_MIDI {
             $eventType = $status >> 4;
             $midiChannel = $status & 0x0f;
             $chunk['EventType'] = $eventType;
-            $chunk['MIDIChannel'] = $midiChannel;
+            $chunk['MIDIChannel'] = $midiChannel + 1;
             switch ($eventType) {
               case 0x8: // Note Off
               case 0x9: // Note On
@@ -527,7 +527,7 @@ class IO_MIDI {
            $this->putVaribleLengthValue($writer, $chunk['DeltaTime']);
            $eventType = $chunk['EventType'];
            if (isset($chunk['MIDIChannel'])) {
-               $midiChannel = $chunk['MIDIChannel'];
+               $midiChannel = $chunk['MIDIChannel'] - 1;
            } else {
                if (isset($chunk['MetaEventType'])) {
                    $midiChannel = 0xF;
