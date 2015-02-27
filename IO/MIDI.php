@@ -436,11 +436,19 @@ class IO_MIDI {
                        echo " $key:";
                         $dataLen = strlen($value);
                         if ($key === 'MetaEventData') {
-                           if ($meta_event_type === 0x05) { // Lyric
-                               echo mb_convert_encoding( $value, "UTF-8" , "SJIS");
-                           } elseif ($meta_event_type === 0x07) { // Cue Point
-                               echo $value;
-                           }
+                            switch ($meta_event_type) {
+                                case 0x05:  // Lyric
+                                   echo mb_convert_encoding( $value, "UTF-8" , "SJIS");
+                                    break;
+                                case 0x07:  // Cue Point
+                                   echo $value;
+                                    break;
+                                case 0x58:  // time signature
+                                   printf("%x/%x", ord($value{0}), pow( 2, ord($value{1}) ) );
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                         echo "(";
                         for ($i = 0 ; $i < $dataLen; $i++) {
