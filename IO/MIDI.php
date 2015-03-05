@@ -132,7 +132,7 @@ class IO_MIDI {
                 }
                 break;
               case 0xC: // Program Change
-                $chunk['ProgramNumber'] =  $reader->getUI8();
+                $chunk['ProgramNumber'] =  $reader->getUI8() + 1;
                 break;
               case 0xD: // Note Aftertouch Event
                 $chunk['Amount'] = $reader->getUI8();
@@ -579,7 +579,7 @@ class IO_MIDI {
                 }
                 break;
               case 0xC: // Program Change
-                $writer->putUI8($chunk['ProgramNumber']);
+                $writer->putUI8($chunk['ProgramNumber'] - 1);
                 break;
               case 0xD: // Note Aftertouch Event
                 $writer->putUI8($chunk['Amount']);
