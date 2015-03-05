@@ -100,7 +100,7 @@ foreach ($tracks as $idx => $track) {
     }
     $channelList  = array_keys($channelTable);
     sort($channelList);
-    echo "    Channel: ".implode(' ', $channelList).PHP_EOL;
+    echo "    Channels: ".implode(' ', $channelList).PHP_EOL;
     foreach ($channelList as $channel) {
         if (isset($programTable[$channel])) {
             $programs = $programTable[$channel];
