@@ -1,6 +1,7 @@
 <?php
 
 require_once 'IO/MIDI.php';
+require_once 'IO/MIDI/GM.php';
 
 $options = getopt("f:");
 
@@ -107,7 +108,12 @@ foreach ($tracks as $idx => $track) {
             $programs = Array('(none)');
         }
         echo "      Channel[$channel]:".PHP_EOL;
-        echo "        Program: ".implode(' ', $programs).PHP_EOL;
+        echo "        Program:";
+	foreach ($programs as $prog) {
+	    $progName = IO_MIDI_GM::getProgramName($prog);
+	    echo " $prog($progName)";
+        }
+	echo PHP_EOL;
         if ($noteOnTable[$channel] === $noteOffTable[$channel]) {
             echo "        NoteOn/OffCount: ".$noteOnTable[$channel];
         } else {
