@@ -551,7 +551,7 @@ class IO_MIDI {
            if (empty($opts['runningstatus']) === true) {
                $writer->putUI8($status);
            } else {
-               if (($prev_status !== $status) || ($status == 0xFF) || ($status == 0xF0)) {
+               if (($prev_status !== $status) || (($status & 0xF0) == 0xF0)) {
                    $writer->putUI8($status);
                    $prev_status = $status;
                }
