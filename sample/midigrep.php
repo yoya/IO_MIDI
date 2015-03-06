@@ -7,6 +7,7 @@ $options = getopt("f:c:C:r");
 function usage() {
     fprintf(STDERR, "Usage: php midigrep.php -f <midi_file> [-r] {-c <channels> | -C <channels>}\n");
     fprintf(STDERR, "ex) php midigrep.php -f in.mid -c 1\n");
+    fprintf(STDERR, "ex) php midigrep.php -f in.mid -c 1,2\n");
     fprintf(STDERR, "ex) php midigrep.php -f in.mid -C 15,16\n");
 }
 
