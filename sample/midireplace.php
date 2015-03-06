@@ -7,6 +7,7 @@ $options = getopt("f:c:r");
 function usage() {
     fprintf(STDERR, "Usage: php midireplace.php -f <midi_file> [-r] -c <channels> \n");
     fprintf(STDERR, "ex) php midireplace.php -f in.mid -c 1=16\n");
+    fprintf(STDERR, "ex) php midireplace.php -f in.mid -c 1=15,2=16\n");
 }
 
 if ((isset($options['f']) === false) || (is_readable($options['f']) === false) || (isset($options['c']) === false)) {
