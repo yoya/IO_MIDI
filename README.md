@@ -1,15 +1,15 @@
-IO_MIDI midi dumper & converter
+**IO_MIDI midi dumper & converter**
 
-* abstract
+# abstract
 
 MIDI binary dumper, converter, powered by PHP.
 
-* require
+# require
 
 - IO_Bit
  - http://openpear.org/package/IO_Bit
 
-* script (sample/*.php)
+# script (sample/*.php)
 
 - mididump.php
 - midiinfo.php
@@ -20,7 +20,7 @@ MIDI binary dumper, converter, powered by PHP.
 - midireplace.php (only channel)
 - midisysexadd.php
 
-* TODO
+# TODO
 
 - converter format 1 => 0, and 0 => 1
 - running-status omit mode detection on parser.
