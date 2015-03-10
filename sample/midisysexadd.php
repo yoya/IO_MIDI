@@ -2,11 +2,12 @@
 
 require_once 'IO/MIDI.php';
 
-$options = getopt("f:s:");
+$options = getopt("f:s:o:");
 
 if ((isset($options['f']) === false) || (is_readable($options['f']) === false) || (isset($options['s']) === false)) {
-    echo "Usage: php midimetadelete.php -f <midi_file> -s <sysex sequence>\n";
-    echo "ex) php midimetadelete.php -f in.mid -s 4300010203 \n";
+    echo "Usage: php midisysexadd.php -f <midi_file> -s <sysex sequence> [-o offset]\n";
+    echo "ex) php midisysexadd.php -f in.mid -s 4300010203 \n";
+    echo "ex) php midisysexadd.php -f in.mid -s 4300010203 -o 10\n";
     exit(1);
 }
 
@@ -21,6 +22,8 @@ foreach (explode(',', $options['s']) as $sysex) {
     );
 }
 
+$offset = isset($options['o'])?((int)$options['o']):0;
+
 $midi = new IO_MIDI();
 $midi->parse($mididata);
 $res = [];
@@ -31,7 +34,7 @@ foreach ($midi->tracks as $key => &$value) {
 }
 
 $track = $midi->tracks[$first_key]["track"];
-array_splice($track, 0, 0, $sysexList);
+array_splice($track, $offset, 0, $sysexList);
 $midi->tracks[$first_key]["track"] = $track;
 
 $opts = array();
