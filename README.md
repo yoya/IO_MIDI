@@ -1,7 +1,5 @@
 # IO_MIDI midi dumper & converter
 
-## abstract
-
 MIDI binary dumper, converter, powered by PHP.
 
 ## require
