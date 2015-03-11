@@ -20,13 +20,14 @@ $midi->parse($mididata);
 $res = [];
 
 foreach ($midi->tracks as $key => &$value) {
-	foreach ($value["track"] as $key2 => &$value2) {
-		if(isset($value2["Velocity"]) && ( $value2["EventType"] === 9 )  && ( $value2["Velocity"] > 0 )  ){
-			if($value2["MIDIChannel"] === $channel_number){
-					$value2["Velocity"] = $velocity_number;
-			}
-		}
-	}
+    foreach ($value["track"] as $key2 => &$value2) {
+        if (isset($value2["Velocity"]) && ( $value2["EventType"] === 9 ) && ( $value2["Velocity"] > 0 ) ) {
+	    if ((0 === $channel_number) ||
+               ($value2["MIDIChannel"] === $channel_number)){
+                $value2["Velocity"] = $velocity_number;
+            }
+        }
+    }
 }
 
 unset($value);
