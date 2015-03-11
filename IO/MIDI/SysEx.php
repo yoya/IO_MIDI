@@ -18,6 +18,7 @@ class IO_MIDI_SysEx {
                     require_once("IO/MIDI/SysEx/$vendor.php");
                 }
             }
+            closedir($d);
         }
         foreach ($sysExVendors as $vendor) {
             $klass = "IO_MIDI_SysEx_$vendor";
