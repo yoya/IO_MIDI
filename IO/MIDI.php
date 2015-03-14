@@ -406,7 +406,7 @@ class IO_MIDI {
                     $deltaTime = $chunk['DeltaTime'];
                     $this->_timeInMeasure -= $deltaTime; // XXX
                     if ($this->_timeInMeasure <= 0) {
-                        echo "=== Measure: {$this->_measureSeqno}\n";
+                        echo "=== Measure:{$this->_measureSeqno}\n";
                         $this->_timeInMeasure = $this->header['header']['Division'] * $this->_measure1 * (4 / $this->_measure2);
                         $this->_measureSeqno++;
                     }
