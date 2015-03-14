@@ -2,7 +2,7 @@
 
 require_once 'IO/MIDI.php';
 
-$options = getopt("f:hv");
+$options = getopt("f:hvm");
 
 if ((isset($options['f']) === false) || (is_readable($options['f']) === false)) {
     fprintf(STDERR, "Usage: php mididump.php -f <midi_file> [-h]\n");
@@ -21,6 +21,9 @@ if (isset($options['h'])) {
 }
 if (isset($options['v'])) {
     $opts['verbose'] = true;
+}
+if (isset($options['m'])) { // 小節
+    $opts['measure'] = true;
 }
 
 $midi->dump($opts);

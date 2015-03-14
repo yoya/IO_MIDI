@@ -14,6 +14,10 @@ class IO_MIDI {
     var $xfkaraoke = null;
     var $_mididata = null;
     var $_scaleCharactor = null;
+    var $_measure1 = 4;
+    var $_measure2 = 4;
+    var $_timeInMeasure = 0;
+    var $_measureSeqno = 1;
 
     function parse($mididata) {
         $this->_mididata = $mididata;
@@ -398,7 +402,16 @@ class IO_MIDI {
                 $bitio->hexdump($track['_offset'], 8);
             }
             foreach ($track['track'] as $idx2 => $chunk) {
-               echo "  [$idx2]:";
+                if (empty($opts['measure']) === false) {
+                    $deltaTime = $chunk['DeltaTime'];
+                    $this->_timeInMeasure -= $deltaTime; // XXX
+                    if ($this->_timeInMeasure <= 0) {
+                        echo "=== Measure: {$this->_measureSeqno}\n";
+                        $this->_timeInMeasure = $this->header['header']['Division'] * $this->_measure1 * (4 / $this->_measure2);
+                        $this->_measureSeqno++;
+                    }
+                 }
+                echo "  [$idx2]:";
                 foreach ($chunk as $key => $value) {
                     switch ($key) {
                       case 'EventType':
@@ -444,7 +457,11 @@ class IO_MIDI {
                                    echo $value;
                                     break;
                                 case 0x58:  // time signature
-                                   printf("%x/%x", ord($value{0}), pow( 2, ord($value{1}) ) );
+                                   $measure1 = ord($value{0});
+                                   $measure2 = pow( 2, ord($value{1}));
+                                   echo "$measure1/$measure2";
+                                   $this->_measure1 = $measure1;
+                                   $this->_measure2 = $measure2;
                                     break;
                                 default:
                                     break;
