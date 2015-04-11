@@ -4,7 +4,12 @@
    http://www.sonicspot.com/guide/midifiles.html
    */
 
-require_once 'IO/Bit.php';
+if (is_readable('vendor/autoload.php')) {
+    require 'vendor/autoload.php';
+} else {
+    require_once 'IO/Bit.php';
+}
+
 require_once('IO/MIDI/SysEx.php');
 
 class IO_MIDI {
